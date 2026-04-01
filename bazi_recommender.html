@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>命运指引 - 五行八字运势分析</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        /* 移除小程序尺寸限制，使用自适应布局 */
+        
+        /* 容器样式 - 自适应屏幕 */
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            background: url('https://console.enterprise.trae.cn/api/ide/v1/text_to_image?prompt=peaceful%20nature%20scenery%2C%20mountains%20and%20lake%2C%20blue%20sky%2C%20white%20clouds%2C%20serene%2C%20calm%2C%20healing&image_size=landscape_16_9');
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            position: relative;
+            overflow-y: auto;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 头部 */
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 40px 30px 30px;
+            position: relative;
+        }
+        
+        /* 重置按钮容器 */
+        .reset-button-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        /* 重置按钮 */
+        .reset-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .reset-button:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: rotate(15deg);
+        }
+        
+        .reset-button:active {
+            transform: rotate(360deg);
+        }
+        
+        .user-info-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .user-info-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+        
+        .greeting {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .greeting h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .greeting p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        /* 每日一语 */
+        .daily-quote {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .daily-quote p {
+            font-style: italic;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .daily-quote .author {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        /* 内容区域 */
+        .content {
+            padding: 30px;
+        }
+        
+        /* 个人信息输入模块 */
+        .info-input-module {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed #dee2e6;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* 运势明细列表 */
+        .fortune-list {
+            margin-top: 30px;
+        }
+        
+        .fortune-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .fortune-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .fortune-item h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .fortune-item p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .details-link {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .details-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        /* 二级分类 */
+        .sub-categories {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        
+        .sub-category {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        
+        .sub-category strong {
+            color: #667eea;
+        }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        /* 可视化图表样式 */
+        .visualization-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #e3f2fd;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 5px 0;
+        }
+        
+        .small-chart-container {
+            position: relative;
+            height: 250px;
+            margin-bottom: 15px;
+        }
+        
+        .visualization-title {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+
+        
+        /* 运势评分条 */
+        .fortune-score {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .score-label {
+            width: 80px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .score-bar-container {
+            flex: 1;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+        
+        .score-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2196f3, #ff9800, #f44336);
+            transition: width 1s ease;
+            border-radius: 10px;
+        }
+        
+        .score-value {
+            width: 40px;
+            text-align: right;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px 20px;
+            }
+            
+            .greeting h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .info-input-module {
+                padding: 20px;
+            }
+            
+            .fortune-item {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                padding: 20px;
+                width: 95%;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <!-- 重置按钮 -->
+            <div class="reset-button-container">
+                <button id="resetButton" class="reset-button" onclick="resetApp()" title="重置应用">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 4v6h-6" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="daily-quote">
+                <p id="dailyQuote">生活不是等待风暴过去，而是学会在雨中翩翩起舞。</p>
+                <div class="author" id="quoteAuthor">— 佚名</div>
+            </div>
+            <div class="greeting">
+                <h1 id="greeting">Hi~ <span id="userNickname">福宝</span><span id="changeNickname" style="cursor: pointer; margin-left: 10px; vertical-align: middle;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 4L4 16M4 16L16 20M4 16L8 20" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="18" cy="8" r="6" fill="#4169E1"/>
+                    </svg>
+                </span></h1>
+                <p id="fortuneSummary">快告诉我你是谁，我来帮你算算吧！</p>
+            </div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="content">
+            <!-- 个人信息输入模块 (未提交时显示) -->
+            <div id="infoInputModule" class="info-input-module">
+                <h2 style="margin-bottom: 5px; color: #667eea; text-align: center;">你的个人机密</h2>
+                <p style="text-align: center; color: #6c757d; margin-bottom: 20px; font-size: 0.9em;">放心，只有我知道</p>
+                <div class="input-group">
+                    <label for="nickname">昵称 <span style="color: red;">*</span></label>
+                    <input type="text" id="nickname" placeholder="请输入您的昵称" required>
+                </div>
+                <div class="input-group">
+                    <label for="birthDate">出生日期 <span style="color: red;">*</span></label>
+                    <input type="date" id="birthDate" placeholder="请选择出生日期" min="1900-01-01" max="2026-12-31" required>
+                </div>
+                <div class="input-group">
+                    <label for="birthHour">出生时辰</label>
+                    <select id="birthHour">
+                        <option value="">请选择时辰</option>
+                        <option value="23">23-01点 (子时)</option>
+                        <option value="1">01-03点 (丑时)</option>
+                        <option value="3">03-05点 (寅时)</option>
+                        <option value="5">05-07点 (卯时)</option>
+                        <option value="7">07-09点 (辰时)</option>
+                        <option value="9">09-11点 (巳时)</option>
+                        <option value="11">11-13点 (午时)</option>
+                        <option value="13">13-15点 (未时)</option>
+                        <option value="15">15-17点 (申时)</option>
+                        <option value="17">17-19点 (酉时)</option>
+                        <option value="19">19-21点 (戌时)</option>
+                        <option value="21">21-23点 (亥时)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="mbti">MBTI</label>
+                    <input type="text" id="mbti" placeholder="例如: INTJ">
+                </div>
+                <div class="input-group">
+                    <label for="location">坐标朝向</label>
+                    <select id="location">
+                        <option value="">请选择方位</option>
+                        <option value="东">东</option>
+                        <option value="南">南</option>
+                        <option value="西">西</option>
+                        <option value="北">北</option>
+                        <option value="东南">东南</option>
+                        <option value="东北">东北</option>
+                        <option value="西南">西南</option>
+                        <option value="西北">西北</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="saveUserInfo()">保存信息并查看运势</button>
+            </div>
+            
+            <!-- 可视化图表区域 (已提交时显示) -->
+            <div id="visualizationSection" class="visualization-section" style="display: none;">
+                <!-- 职场运势雷达图 -->
+                <div class="visualization-title">职场运势雷达图</div>
+                <div class="chart-container">
+                    <canvas id="wuxingRadarChart"></canvas>
+                    <!-- SVG雷达图 -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+                        <!-- 定义渐变 -->
+                        <defs>
+                            <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#5A67F0;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#8DA2F8;stop-opacity:0.3" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- 同心参考网格 -->
+                        <circle cx="300" cy="300" r="60" fill="none" stroke="#E0E4F1" stroke-width="0.5" />
+                        <circle cx="300" cy="300" r="120" fill="none" stroke="#E0E4F1" stroke-width="0.5" />
+                        <circle cx="300" cy="300" r="180" fill="none" stroke="#E0E4F1" stroke-width="0.5" />
+                        
+                        <!-- 轴线 -->
+                        <line x1="300" y1="120" x2="300" y2="300" stroke="#E0E4F1" stroke-width="0.8" />
+                        <line x1="300" y1="300" x2="456" y2="190" stroke="#E0E4F1" stroke-width="0.8" />
+                        <line x1="300" y1="300" x2="456" y2="410" stroke="#E0E4F1" stroke-width="0.8" />
+                        <line x1="300" y1="300" x2="144" y2="410" stroke="#E0E4F1" stroke-width="0.8" />
+                        <line x1="300" y1="300" x2="144" y2="190" stroke="#E0E4F1" stroke-width="0.8" />
+                        
+                        <!-- 维度标签 -->
+                        <text x="300" y="110" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">事业运</text>
+                        <text x="466" y="185" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">效率值</text>
+                        <text x="466" y="430" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">人际运</text>
+                        <text x="134" y="430" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">情绪值</text>
+                        <text x="134" y="185" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">财运</text>
+                        
+                        <!-- 数据区域 - 示例数据：[85,70,90,65,75] -->
+                        <!-- 计算坐标：0-100映射到0-180半径 -->
+                        <!-- 坐标计算：角度从顶部开始，顺时针旋转 -->
+                        <!-- 角度：0°, 72°, 144°, 216°, 288° -->
+                        <path d="M300,137 L426,184 L462,360 L207,405 L183,225 Z" fill="url(#radarGradient)" stroke="#5A67F0" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" rx="6" />
+                    </svg>
+                </div>
+                
+                <!-- 今日运势评分 -->
+                <div class="visualization-title">今日运势综合评分</div>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div id="totalScore" style="font-size: 48px; font-weight: bold; color: #667eea;">0</div>
+                    <div style="font-size: 14px; color: #667eea;">满分100分</div>
+                </div>
+                <div class="fortune-scores">
+                    <div class="fortune-score">
+                        <div class="score-label">事业运</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="financeScoreBar" style="width: 0%"></div>
+                        </div>
+                        <div class="score-value" id="financeScore">0</div>
+                    </div>
+                    <div class="fortune-score">
+                        <div class="score-label">人际运</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="relationshipScoreBar" style="width: 0%"></div>
+                        </div>
+                        <div class="score-value" id="relationshipScore">0</div>
+                    </div>
+                    <div class="fortune-score">
+                        <div class="score-label">财运</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="efficiencyScoreBar" style="width: 0%"></div>
+                        </div>
+                        <div class="score-value" id="efficiencyScore">0</div>
+                    </div>
+                    <div class="fortune-score">
+                        <div class="score-label">情绪值</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="dietScoreBar" style="width: 0%"></div>
+                        </div>
+                        <div class="score-value" id="dietScore">0</div>
+                    </div>
+                    <div class="fortune-score">
+                        <div class="score-label">效率值</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="spiritScoreBar" style="width: 0%"></div>
+                        </div>
+                        <div class="score-value" id="spiritScore">0</div>
+                    </div>
+                    <div class="fortune-score">
+                        <div class="score-label">贵人运</div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="luckScoreBar" style="width: 0%"></div>
+                        </div>
+                        <div class="score-value" id="luckScore">0</div>
+                    </div>
+                </div>
+                
+                <!-- 运势评语 -->
+                <div class="visualization-title">今日运势评语</div>
+                <div id="fortuneComment" style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px; margin-top: 20px; line-height: 1.8;"></div>
+            </div>
+            
+            <!-- 运势明细列表 (已提交时显示) -->
+            <div id="fortuneList" class="fortune-list" style="display: none;">
+                <div class="fortune-item">
+                    <h3>💰 财运</h3>
+                    <p id="financeSummary">今日财运平稳，正财收入稳定，偏财方面有小惊喜。适合稳健投资，避免冒险投机。</p>
+                    <span class="details-link" onclick="openDetailsModal('finance')">详情</span>
+                </div>
+                
+                <div class="fortune-item">
+                    <h3>🤝 人际</h3>
+                    <p id="relationshipSummary">今日人际关系和谐，容易得到他人帮助。适合团队合作，与同事沟通顺畅。</p>
+                    <span class="details-link" onclick="openDetailsModal('relationship')">详情</span>
+                </div>
+                
+                <div class="fortune-item">
+                    <h3>⚡ 效率</h3>
+                    <p id="efficiencySummary">今日工作效率较高，思维清晰，适合处理重要任务。上午精力充沛，建议安排核心工作。</p>
+                    <span class="details-link" onclick="openDetailsModal('efficiency')">详情</span>
+                </div>
+                
+                <div class="fortune-item">
+                    <h3>🍎 减肥饮食</h3>
+                    <p>今日饮食宜清淡，注重营养均衡。</p>
+                    <div class="sub-categories">
+                        <div class="sub-category"><strong>早餐：</strong><span id="breakfast">全麦面包、鸡蛋、牛奶、新鲜水果</span></div>
+                        <div class="sub-category"><strong>午餐：</strong><span id="lunch">清蒸鱼、蔬菜沙拉、糙米饭</span></div>
+                        <div class="sub-category"><strong>晚餐：</strong><span id="dinner">豆腐汤、炒青菜、玉米</span></div>
+                    </div>
+                    <span class="details-link" onclick="openDetailsModal('diet')">详情</span>
+                </div>
+                
+                <div class="fortune-item">
+                    <h3>🧘 精神</h3>
+                    <p id="spiritSummary">今日精神状态良好，心情愉悦。建议适当运动，保持充足睡眠。</p>
+                    <span class="details-link" onclick="openDetailsModal('spirit')">详情</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 个人信息修改模态框 -->
+    <div id="userInfoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeUserInfoModal()">&times;</span>
+            <h2 style="margin-bottom: 20px; color: #667eea;">修改个人信息</h2>
+            <div class="input-group">
+                <label for="editNickname">昵称 <span style="color: red;">*</span></label>
+                <input type="text" id="editNickname" placeholder="请输入您的昵称" required>
+            </div>
+            <div class="input-group">
+                <label for="editBirthDate">出生日期 <span style="color: red;">*</span></label>
+                <input type="date" id="editBirthDate" placeholder="请选择出生日期" min="1900-01-01" max="2026-12-31" required>
+            </div>
+            <div class="input-group">
+                <label for="editBirthHour">出生时辰</label>
+                <select id="editBirthHour">
+                    <option value="">请选择时辰</option>
+                    <option value="23">23-01点 (子时)</option>
+                    <option value="1">01-03点 (丑时)</option>
+                    <option value="3">03-05点 (寅时)</option>
+                    <option value="5">05-07点 (卯时)</option>
+                    <option value="7">07-09点 (辰时)</option>
+                    <option value="9">09-11点 (巳时)</option>
+                    <option value="11">11-13点 (午时)</option>
+                    <option value="13">13-15点 (未时)</option>
+                    <option value="15">15-17点 (申时)</option>
+                    <option value="17">17-19点 (酉时)</option>
+                    <option value="19">19-21点 (戌时)</option>
+                    <option value="21">21-23点 (亥时)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="editMbti">MBTI</label>
+                <input type="text" id="editMbti" placeholder="例如: INTJ">
+            </div>
+            <div class="input-group">
+                <label for="editLocation">坐标朝向</label>
+                <select id="editLocation">
+                    <option value="">请选择方位</option>
+                    <option value="东">东</option>
+                    <option value="南">南</option>
+                    <option value="西">西</option>
+                    <option value="北">北</option>
+                    <option value="东南">东南</option>
+                    <option value="东北">东北</option>
+                    <option value="西南">西南</option>
+                    <option value="西北">西北</option>
+                </select>
+            </div>
+            <button class="btn-primary" onclick="updateUserInfo()">保存修改</button>
+        </div>
+    </div>
+    
+    <!-- 详细说明模态框 -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeDetailsModal()">&times;</span>
+            <h2 id="detailsTitle" style="margin-bottom: 20px; color: #667eea;"></h2>
+            <div id="detailsContent" style="line-height: 1.8; color: #555;"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 每日一语数据库
+        const dailyQuotes = [
+            { quote: "生活不是等待风暴过去，而是学会在雨中翩翩起舞。", author: "— 佚名" },
+            { quote: "成功是日复一日那一点点小小努力的积累。", author: "— 罗伯特·科利尔" },
+            { quote: "你的时间有限，所以不要为别人而活。", author: "— 史蒂夫·乔布斯" },
+            { quote: "我们最大的荣耀不在于从不跌倒，而在于每次跌倒后都爬起来。", author: "— 纳尔逊·曼德拉" },
+            { quote: "你今天的态度，决定了你明天的高度。", author: "— 佚名" },
+            { quote: "行动是治愈恐惧的良药，而犹豫、拖延将不断滋养恐惧。", author: "— 戴尔·卡耐基" },
+            { quote: "生活就像海洋，只有意志坚强的人才能到达彼岸。", author: "— 马克思" },
+            { quote: "今天所做之事勿候明天，自己所做之事勿候他人。", author: "— 歌德" },
+            { quote: "一个人的价值，应该看他贡献什么，而不应当看他取得什么。", author: "— 爱因斯坦" },
+            { quote: "每一个不曾起舞的日子，都是对生命的辜负。", author: "— 尼采" }
+        ];
+        
+        // 五行相生相克关系
+        const wuxing = {
+            wood: { element: '木', description: '生长、发展、活力' },
+            fire: { element: '火', description: '热情、活力、创造力' },
+            earth: { element: '土', description: '稳定、包容、务实' },
+            metal: { element: '金', description: '锐利、果断、坚强' },
+            water: { element: '水', description: '智慧、灵活、流动' }
+        };
+        
+        // 存储的用户信息
+        let userInfo = null;
+        let currentUser = '';
+        
+        // 初始化
+        function init() {
+            // 显示每日一语
+            showDailyQuote();
+            
+            // 加载最后使用的用户
+            loadLastUser();
+            
+            // 根据用户信息显示不同内容
+            if (userInfo) {
+                showFortuneList();
+            } else {
+                showInfoInput();
+            }
+        }
+        
+        // 确保DOM完全加载后绑定事件
+        document.addEventListener('DOMContentLoaded', () => {
+            // 绑定编辑图标点击事件
+            const changeBtn = document.getElementById('changeNickname');
+            if (changeBtn) {
+                // 移除可能存在的旧事件监听器
+                changeBtn.removeEventListener('click', openUserInfoModal);
+                // 添加新的事件监听器
+                changeBtn.addEventListener('click', () => {
+                    console.log('编辑图标被点击');
+                    openUserInfoModal();
+                });
+                console.log('已绑定编辑图标点击事件');
+            } else {
+                console.error('未找到changeNickname元素');
+            }
+        });
+        
+        // 显示每日一语
+        function showDailyQuote() {
+            const randomIndex = Math.floor(Math.random() * dailyQuotes.length);
+            const quote = dailyQuotes[randomIndex];
+            document.getElementById('dailyQuote').textContent = quote.quote;
+            document.getElementById('quoteAuthor').textContent = quote.author;
+        }
+        
+        // 加载最后使用的用户
+        function loadLastUser() {
+            const lastUser = localStorage.getItem('lastUsedUser');
+            if (lastUser) {
+                currentUser = lastUser;
+                loadUserInfo(lastUser);
+            }
+        }
+        
+        // 保存最后使用的用户
+        function saveLastUser(nickname) {
+            localStorage.setItem('lastUsedUser', nickname);
+            currentUser = nickname;
+        }
+        
+        // 加载用户信息
+        function loadUserInfo(nickname) {
+            if (!nickname) return;
+            const savedInfo = localStorage.getItem('userInfo_' + nickname);
+            if (savedInfo) {
+                userInfo = JSON.parse(savedInfo);
+                currentUser = nickname;
+            }
+        }
+        
+        // 保存用户信息
+        function saveUserInfoToStorage(info) {
+            // 如果是修改现有用户
+            if (currentUser && currentUser === info.nickname) {
+                localStorage.setItem('userInfo_' + info.nickname, JSON.stringify(info));
+                userInfo = info;
+            } 
+            // 如果是修改昵称为新用户
+            else if (currentUser && currentUser !== info.nickname) {
+                // 保存新用户信息
+                localStorage.setItem('userInfo_' + info.nickname, JSON.stringify(info));
+                userInfo = info;
+                // 更新当前用户
+                saveLastUser(info.nickname);
+            } 
+            // 如果是新用户
+            else {
+                localStorage.setItem('userInfo_' + info.nickname, JSON.stringify(info));
+                userInfo = info;
+                saveLastUser(info.nickname);
+            }
+        }
+        
+        // 显示信息输入模块
+        function showInfoInput() {
+            document.getElementById('infoInputModule').style.display = 'block';
+            document.getElementById('fortuneList').style.display = 'none';
+        }
+        
+        // 显示运势列表
+        function showFortuneList() {
+            document.getElementById('infoInputModule').style.display = 'none';
+            document.getElementById('visualizationSection').style.display = 'block';
+            document.getElementById('fortuneList').style.display = 'block';
+            
+            // 更新招呼语
+            updateGreeting();
+            
+            // 生成运势
+            generateFortune();
+        }
+        
+        // 更新招呼语
+        function updateGreeting() {
+            const nickname = userInfo.nickname || '福宝';
+            const fortuneSummary = generateFortuneSummary();
+            document.getElementById('userNickname').textContent = nickname;
+            document.getElementById('fortuneSummary').textContent = `今天你的${fortuneSummary}`;
+        }
+        
+        // 生成运势总结
+        function generateFortuneSummary() {
+            const summaries = [
+                '运势不错，事事顺利！',
+                '运势平稳，保持积极！',
+                '运势上扬，机会多多！',
+                '运势一般，稳扎稳打！',
+                '运势较好，适合行动！'
+            ];
+            return summaries[Math.floor(Math.random() * summaries.length)];
+        }
+        
+        // 根据出生日期计算生肖
+        function calculateZodiac(year) {
+            const zodiacs = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+            return zodiacs[(year - 4) % 12];
+        }
+        
+        // 根据出生日期计算星座
+        function calculateConstellation(month, day) {
+            const constellations = [
+                { name: '摩羯座', startMonth: 12, startDay: 22 },
+                { name: '水瓶座', startMonth: 1, startDay: 20 },
+                { name: '双鱼座', startMonth: 2, startDay: 19 },
+                { name: '白羊座', startMonth: 3, startDay: 21 },
+                { name: '金牛座', startMonth: 4, startDay: 20 },
+                { name: '双子座', startMonth: 5, startDay: 21 },
+                { name: '巨蟹座', startMonth: 6, startDay: 21 },
+                { name: '狮子座', startMonth: 7, startDay: 23 },
+                { name: '处女座', startMonth: 8, startDay: 23 },
+                { name: '天秤座', startMonth: 9, startDay: 23 },
+                { name: '天蝎座', startMonth: 10, startDay: 24 },
+                { name: '射手座', startMonth: 11, startDay: 23 }
+            ];
+            
+            for (let i = 0; i < constellations.length; i++) {
+                const c = constellations[i];
+                if ((month === c.startMonth && day >= c.startDay) || 
+                    (month === (c.startMonth + 1) && day < constellations[(i + 1) % constellations.length].startDay)) {
+                    return c.name;
+                }
+            }
+            return '摩羯座'; // 默认
+        }
+        
+        // 保存用户信息
+        function saveUserInfo() {
+            const nickname = document.getElementById('nickname').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const birthHour = parseInt(document.getElementById('birthHour').value);
+            const mbti = document.getElementById('mbti').value;
+            const location = document.getElementById('location').value;
+            
+            // 验证输入
+            if (!nickname || !birthDate) {
+                alert('请填写昵称和出生日期');
+                return;
+            }
+            
+            // 解析出生日期
+            const date = new Date(birthDate);
+            const birthYear = date.getFullYear();
+            const birthMonth = date.getMonth() + 1;
+            const birthDay = date.getDate();
+            
+            // 计算生肖和星座
+            const zodiac = calculateZodiac(birthYear);
+            const constellation = calculateConstellation(birthMonth, birthDay);
+            
+            const info = {
+                nickname,
+                birthYear,
+                birthMonth,
+                birthDay,
+                birthHour,
+                zodiac,
+                constellation,
+                mbti,
+                location
+            };
+            
+            saveUserInfoToStorage(info);
+            showFortuneList();
+        }
+        
+        // 更新运势明细列表
+        function updateFortuneList(fortuneData) {
+            // 更新财运
+            if (document.getElementById('financeSummary')) {
+                document.getElementById('financeSummary').textContent = fortuneData.detailedInfo.finance;
+            }
+            
+            // 更新人际
+            if (document.getElementById('relationshipSummary')) {
+                document.getElementById('relationshipSummary').textContent = fortuneData.detailedInfo.relationship;
+            }
+            
+            // 更新效率
+            if (document.getElementById('efficiencySummary')) {
+                document.getElementById('efficiencySummary').textContent = `今日效率值较高，适合处理重要任务。效率值：${fortuneData.dimensions['效率值']}/10`;
+            }
+            
+            // 更新精神
+            if (document.getElementById('spiritSummary')) {
+                document.getElementById('spiritSummary').textContent = fortuneData.detailedInfo.spirit;
+            }
+        }
+        
+        // 生成运势
+        function generateFortune() {
+            // 直接调用updateFortuneScores，使用新的运势生成逻辑
+            updateFortuneScores();
+            
+            // 更新可视化图表
+            const bazi = generateBazi(userInfo.birthYear, userInfo.birthMonth, userInfo.birthDay, userInfo.birthHour);
+            const elements = analyzeBaziElements(bazi);
+            updateVisualization(elements);
+        }
+        
+        // 更新可视化图表
+        function updateVisualization(elements) {
+            // 绘制职场运势雷达图
+            drawWuxingRadarChart(elements);
+            
+            // 更新运势评分条
+            updateFortuneScores();
+        }
+        
+        // 生成职场运势雷达图数据
+        function generateCareerRadarData() {
+            // 使用generateTodayFortune函数生成运势数据，确保与评分条数据一致
+            const fortuneData = generateTodayFortune(userInfo);
+            return fortuneData.dimensions;
+        }
+        
+        // 绘制职场运势雷达图
+        function drawWuxingRadarChart(elements) {
+            const ctx = document.getElementById('wuxingRadarChart').getContext('2d');
+            
+            // 销毁现有图表
+            if (window.wuxingRadarChart) {
+                window.wuxingRadarChart.destroy();
+            }
+            
+            // 获取职场运势数据
+            const careerData = generateCareerRadarData();
+            const labels = Object.keys(careerData);
+            const values = Object.values(careerData);
+            
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: '职场运势 (10分制)',
+                    data: values,
+                    // 使用浅蓝紫渐变填充
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 2, // 细线条
+                    pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5, // 小节点
+                    pointHoverRadius: 7,
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(102, 126, 234, 1)',
+                    pointHoverBorderWidth: 2,
+                    tension: 0.5 // 平滑曲线
+                }]
+            };
+            
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 10,
+                        min: 0,
+                        ticks: {
+                            stepSize: 2,
+                            color: '#667eea',
+                            font: {
+                                size: 12,
+                                weight: 'normal' // 正常字重，更现代
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(102, 126, 234, 0.15)',
+                            circular: true
+                        },
+                        angleLines: {
+                            color: 'rgba(102, 126, 234, 0.25)',
+                            lineWidth: 1 // 细角度线
+                        },
+                        pointLabels: {
+                            color: '#667eea',
+                            font: {
+                                size: 14,
+                                weight: 'normal'
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#667eea',
+                            font: {
+                                size: 14,
+                                weight: 'normal'
+                            },
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(102, 126, 234, 0.95)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: 'rgba(255, 255, 255, 0.7)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.r + '分';
+                            }
+                        }
+                    }
+                },
+                elements: {
+                    line: {
+                        borderCapStyle: 'round', // 圆角线条
+                        borderJoinStyle: 'round'
+                    },
+                    point: {
+                        radius: 5,
+                        hoverRadius: 7
+                    }
+                }
+            };
+            
+            window.wuxingRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: data,
+                options: options
+            });
+        }
+        
+        // 根据易经和星座标准生成评分 (0-100分制)
+        function generateFortuneScore(element, aspect) {
+            // 基础分 (50-70分)
+            let baseScore = Math.floor(Math.random() * 21) + 50;
+            
+            // 根据五行元素调整分数
+            const elementAdjustment = {
+                wood: {
+                    finance: 0,       // 木主仁，财运一般
+                    relationship: 10,  // 木主生，人际关系好
+                    efficiency: 10,    // 木主动，效率高
+                    diet: 0,          // 木主肝，饮食平衡
+                    spirit: 10        // 木主升，精神好
+                },
+                fire: {
+                    finance: 10,      // 火主礼，财运好
+                    relationship: 0,   // 火主烈，人际关系一般
+                    efficiency: 10,    // 火主动，效率高
+                    diet: -10,        // 火主心，饮食宜清淡
+                    spirit: 0         // 火主热，精神易烦躁
+                },
+                earth: {
+                    finance: 0,       // 土主信，财运平稳
+                    relationship: 10,  // 土主容，人际关系好
+                    efficiency: -10,   // 土主静，效率一般
+                    diet: 10,         // 土主脾，饮食宜规律
+                    spirit: 10        // 土主稳，精神稳定
+                },
+                metal: {
+                    finance: 10,      // 金主义，财运好
+                    relationship: -10, // 金主刚，人际关系一般
+                    efficiency: 10,    // 金主断，效率高
+                    diet: 0,          // 金主肺，饮食宜滋润
+                    spirit: 0         // 金主肃，精神平静
+                },
+                water: {
+                    finance: 0,       // 水主智，财运平稳
+                    relationship: 0,   // 水主藏，人际关系一般
+                    efficiency: 0,     // 水主流，效率一般
+                    diet: 0,          // 水主肾，饮食宜温补
+                    spirit: -10       // 水主寒，精神易消沉
+                }
+            };
+            
+            // 添加元素调整
+            if (elementAdjustment[element] && elementAdjustment[element][aspect]) {
+                baseScore += elementAdjustment[element][aspect];
+            }
+            
+            // 随机波动 (-10 到 +10)
+            baseScore += Math.floor(Math.random() * 21) - 10;
+            
+            // 确保分数在0-100之间
+            return Math.max(0, Math.min(100, baseScore));
+        }
+        
+        // 生成运势评语
+        function generateFortuneComment(scores) {
+            const totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0) / Object.values(scores).length;
+            let comment = '';
+            
+            // 根据总分生成整体评语
+            if (totalScore >= 80) {
+                comment = '今日运势超棒！工作效率在线，人际和谐，适合冲刺目标。';
+            } else if (totalScore >= 60) {
+                comment = '今日运势不错，保持积极，工作和生活都能平稳推进。';
+            } else {
+                comment = '今日运势一般，调整心态，小步前进也能有所收获。';
+            }
+            
+            return comment;
+        }
+        
+        // 更新运势评分条
+        function updateFortuneScores() {
+            // 使用generateTodayFortune函数生成运势数据
+            const fortuneData = generateTodayFortune(userInfo);
+            
+            // 职场运势六维度数据（直接使用新的数据格式）
+            const careerScores = fortuneData.dimensions;
+            
+            // 更新评分条 - 注意ID映射
+            const idMapping = {
+                '事业运': 'financeScore',
+                '人际运': 'relationshipScore',
+                '财运': 'efficiencyScore',
+                '情绪值': 'dietScore',
+                '效率值': 'spiritScore',
+                '贵人运': 'luckScore'
+            };
+            
+            Object.keys(careerScores).forEach(dimension => {
+                const score = careerScores[dimension];
+                const id = idMapping[dimension];
+                if (id) {
+                    // 10分制映射到100%宽度
+                    const barWidth = (score / 10) * 100 + '%';
+                    document.getElementById(id + 'Bar').style.width = barWidth;
+                    document.getElementById(id).textContent = score;
+                }
+            });
+            
+            // 更新综合评分显示
+            document.getElementById('totalScore').textContent = fortuneData.totalScore;
+            
+            // 生成并显示运势评语
+            document.getElementById('fortuneComment').textContent = fortuneData.comment;
+            
+            // 更新运势明细列表
+            updateFortuneList(fortuneData);
+        }
+        
+        // 生成八字（简化版）
+        function generateBazi(year, month, day, hour) {
+            const stems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+            const branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+            
+            const yearStemIndex = (year - 4) % 10;
+            const yearBranchIndex = (year - 4) % 12;
+            
+            const monthStemIndex = (yearStemIndex * 2 + month) % 10;
+            const monthBranchIndex = (month + 1) % 12;
+            
+            const dayStemIndex = (year + Math.floor(year / 4) + day) % 10;
+            const dayBranchIndex = (year + Math.floor(year / 4) + day) % 12;
+            
+            const hourStemIndex = ((dayStemIndex + 1) * 2 + Math.floor(hour / 2)) % 10;
+            const hourBranchIndex = Math.floor(hour / 2) % 12;
+            
+            return {
+                year: stems[yearStemIndex] + branches[yearBranchIndex],
+                month: stems[monthStemIndex] + branches[monthBranchIndex],
+                day: stems[dayStemIndex] + branches[dayBranchIndex],
+                hour: stems[hourStemIndex] + branches[hourBranchIndex]
+            };
+        }
+        
+        // 分析八字五行
+        function analyzeBaziElements(bazi) {
+            const heavenlyStems = {
+                '甲': 'wood', '乙': 'wood', '丙': 'fire', '丁': 'fire',
+                '戊': 'earth', '己': 'earth', '庚': 'metal', '辛': 'metal',
+                '壬': 'water', '癸': 'water'
+            };
+            
+            const earthlyBranches = {
+                '子': 'water', '丑': 'earth', '寅': 'wood', '卯': 'wood',
+                '辰': 'earth', '巳': 'fire', '午': 'fire', '未': 'earth',
+                '申': 'metal', '酉': 'metal', '戌': 'earth', '亥': 'water'
+            };
+            
+            const elements = [];
+            Object.values(bazi).forEach(item => {
+                const stem = item.charAt(0);
+                const branch = item.charAt(1);
+                elements.push(heavenlyStems[stem]);
+                elements.push(earthlyBranches[branch]);
+            });
+            
+            // 统计五行出现次数
+            const elementCount = {};
+            elements.forEach(el => {
+                elementCount[el] = (elementCount[el] || 0) + 1;
+            });
+            
+            return elementCount;
+        }
+        
+        // 生成财运运势
+        function generateFinanceFortune(elements) {
+            const financeSummary = document.getElementById('financeSummary');
+            let summary = '';
+            
+            if (elements.metal > 2) {
+                summary = '今日财运旺盛，正财收入可观，偏财方面也有不错的机会。适合积极投资，但需注意风险控制。';
+            } else if (elements.water > 2) {
+                summary = '今日财运平稳，有小财入账。适合稳健理财，避免冒险投机。';
+            } else if (elements.earth > 2) {
+                summary = '今日财运一般，建议保守理财。可以考虑储蓄或低风险投资。';
+            } else {
+                summary = '今日财运尚可，适合规划财务，制定长期投资计划。';
+            }
+            
+            financeSummary.textContent = summary;
+        }
+        
+        // 生成人际关系运势
+        function generateRelationshipFortune(elements) {
+            const relationshipSummary = document.getElementById('relationshipSummary');
+            let summary = '';
+            
+            if (elements.fire > 2) {
+                summary = '今日人际关系活跃，容易与人建立良好关系。适合参加社交活动，拓展人脉。';
+            } else if (elements.wood > 2) {
+                summary = '今日人际关系和谐，与同事朋友沟通顺畅。适合团队合作，共同完成任务。';
+            } else if (elements.water > 2) {
+                summary = '今日人际关系平淡，建议保持低调，专注于自己的事情。';
+            } else {
+                summary = '今日人际关系稳定，适合与重要人物沟通交流。';
+            }
+            
+            relationshipSummary.textContent = summary;
+        }
+        
+        // 生成工作效率运势
+        function generateEfficiencyFortune(elements) {
+            const efficiencySummary = document.getElementById('efficiencySummary');
+            let summary = '';
+            
+            if (elements.metal > 2) {
+                summary = '今日工作效率极高，思维清晰，决策果断。适合处理复杂任务和重要决策。';
+            } else if (elements.wood > 2) {
+                summary = '今日工作效率不错，创意十足。适合从事创造性工作，如设计、策划等。';
+            } else if (elements.fire > 2) {
+                summary = '今日工作效率一般，容易分心。建议制定详细计划，提高专注力。';
+            } else {
+                summary = '今日工作效率稳定，适合按部就班完成任务。';
+            }
+            
+            efficiencySummary.textContent = summary;
+        }
+        
+        // 生成饮食运势
+        function generateDietFortune(elements) {
+            // 根据五行生成饮食建议
+            const breakfast = document.getElementById('breakfast');
+            const lunch = document.getElementById('lunch');
+            const dinner = document.getElementById('dinner');
+            
+            if (elements.fire > 2) {
+                breakfast.textContent = '小米粥、鸡蛋、凉拌黄瓜、苹果';
+                lunch.textContent = '清蒸鱼、苦瓜炒蛋、凉拌菠菜、米饭';
+                dinner.textContent = '绿豆汤、豆腐炒青菜、玉米';
+            } else if (elements.wood > 2) {
+                breakfast.textContent = '全麦面包、牛奶、香蕉、核桃';
+                lunch.textContent = '红烧肉、炒胡萝卜、西红柿蛋汤、米饭';
+                dinner.textContent = '排骨汤、炒白菜、红薯';
+            } else if (elements.earth > 2) {
+                breakfast.textContent = '豆浆、包子、橙子、杏仁';
+                lunch.textContent = '清蒸鸡、炒西兰花、紫菜汤、米饭';
+                dinner.textContent = '山药粥、炒豆芽、南瓜';
+            } else {
+                breakfast.textContent = '燕麦粥、鸡蛋、草莓、腰果';
+                lunch.textContent = '水煮牛肉、炒芹菜、冬瓜汤、米饭';
+                dinner.textContent = '银耳汤、炒茄子、土豆';
+            }
+        }
+        
+        // 生成精神运势
+        function generateSpiritFortune(elements) {
+            const spiritSummary = document.getElementById('spiritSummary');
+            let summary = '';
+            
+            if (elements.water > 2) {
+                summary = '今日精神状态极佳，思维敏捷，精力充沛。建议适当运动，保持良好状态。';
+            } else if (elements.wood > 2) {
+                summary = '今日精神状态良好，心情愉悦。适合户外活动，呼吸新鲜空气。';
+            } else if (elements.earth > 2) {
+                summary = '今日精神状态一般，容易疲劳。建议注意休息，保证充足睡眠。';
+            } else {
+                summary = '今日精神状态稳定，适合冥想或瑜伽，放松身心。';
+            }
+            
+            spiritSummary.textContent = summary;
+        }
+        
+        // 打开个人信息修改模态框
+        function openUserInfoModal() {
+            console.log('打开个人信息修改模态框');
+            if (userInfo) {
+                console.log('当前用户信息:', userInfo);
+                // 填充现有信息
+                try {
+                    document.getElementById('editNickname').value = userInfo.nickname || '';
+                    
+                    // 格式化出生日期为YYYY-MM-DD
+                    const birthDate = new Date(userInfo.birthYear, userInfo.birthMonth - 1, userInfo.birthDay);
+                    const formattedDate = birthDate.toISOString().split('T')[0];
+                    document.getElementById('editBirthDate').value = formattedDate;
+                    
+                    document.getElementById('editBirthHour').value = userInfo.birthHour || '';
+                    document.getElementById('editMbti').value = userInfo.mbti || '';
+                    document.getElementById('editLocation').value = userInfo.location || '';
+                    console.log('已填充现有信息');
+                } catch (error) {
+                    console.error('填充信息时出错:', error);
+                }
+            }
+            
+            // 显示模态框
+            const modal = document.getElementById('userInfoModal');
+            if (modal) {
+                modal.style.display = 'block';
+                console.log('已显示模态框');
+            } else {
+                console.error('未找到userInfoModal元素');
+            }
+        }
+        
+        // 关闭个人信息修改模态框
+        function closeUserInfoModal() {
+            document.getElementById('userInfoModal').style.display = 'none';
+        }
+        
+        // 更新用户信息
+        function updateUserInfo() {
+            console.log('开始更新用户信息');
+            
+            // 获取表单数据
+            const nickname = document.getElementById('editNickname').value;
+            const birthDate = document.getElementById('editBirthDate').value;
+            const birthHour = parseInt(document.getElementById('editBirthHour').value);
+            const mbti = document.getElementById('editMbti').value;
+            const location = document.getElementById('editLocation').value;
+            
+            console.log('表单数据:', { nickname, birthDate, birthHour, mbti, location });
+            
+            // 验证输入
+            if (!nickname || !birthDate) {
+                alert('请填写昵称和出生日期');
+                console.error('缺少必填字段');
+                return;
+            }
+            
+            // 解析出生日期
+            const date = new Date(birthDate);
+            const birthYear = date.getFullYear();
+            const birthMonth = date.getMonth() + 1;
+            const birthDay = date.getDate();
+            
+            console.log('解析后的日期:', { birthYear, birthMonth, birthDay });
+            
+            // 计算生肖和星座
+            const zodiac = calculateZodiac(birthYear);
+            const constellation = calculateConstellation(birthMonth, birthDay);
+            
+            console.log('计算的生肖和星座:', { zodiac, constellation });
+            
+            const info = {
+                nickname,
+                birthYear,
+                birthMonth,
+                birthDay,
+                birthHour,
+                zodiac,
+                constellation,
+                mbti,
+                location
+            };
+            
+            console.log('新的用户信息:', info);
+            
+            // 保存信息
+            saveUserInfoToStorage(info);
+            console.log('已保存用户信息');
+            
+            // 关闭模态框
+            closeUserInfoModal();
+            console.log('已关闭模态框');
+            
+            // 重新生成运势
+            console.log('开始重新生成运势');
+            showFortuneList();
+            console.log('更新完成');
+        }
+        
+        // 打开详细说明模态框
+        function openDetailsModal(type) {
+            const modal = document.getElementById('detailsModal');
+            const title = document.getElementById('detailsTitle');
+            const content = document.getElementById('detailsContent');
+            
+            // 获取运势数据
+            const fortuneData = generateTodayFortune(userInfo);
+            
+            // 获取开运指南
+            const luckyGuide = fortuneData.luckyGuide;
+            
+            // 生成开运指南HTML
+            const luckyGuideHTML = `
+                <h4>开运指南：</h4>
+                <ul style="padding-left: 20px;">
+                    <li>幸运水晶 / 配饰：${luckyGuide.crystals.join('、')}</li>
+                    <li>幸运穿搭颜色：${luckyGuide.luckyColors}</li>
+                    <li>桌面开运摆件：${luckyGuide.deskItems.join('、')}</li>
+                    <li>电脑屏幕朝向：${luckyGuide.screenDirection}</li>
+                </ul>
+            `;
+            
+            // 根据类型设置内容
+            switch(type) {
+                case 'finance':
+                    title.textContent = '💰 财运详情';
+                    content.innerHTML = `
+                        <h3>今日财运分析</h3>
+                        <p>${fortuneData.detailedInfo.finance}</p>
+                        ${luckyGuideHTML}
+                    `;
+                    break;
+                    
+                case 'relationship':
+                    title.textContent = '🤝 人际详情';
+                    content.innerHTML = `
+                        <h3>今日人际关系分析</h3>
+                        <p>${fortuneData.detailedInfo.relationship}</p>
+                        ${luckyGuideHTML}
+                    `;
+                    break;
+                    
+                case 'efficiency':
+                    title.textContent = '⚡ 效率详情';
+                    content.innerHTML = `
+                        <h3>今日工作效率分析</h3>
+                        <p>今日效率值：${fortuneData.dimensions['效率值']}/10，工作效率较高，思维清晰，适合处理重要任务。</p>
+                        <h4>好的方面：</h4>
+                        <ul style="padding-left: 20px;">
+                            <li>思维敏捷，判断力强</li>
+                            <li>行动力强，执行效率高</li>
+                            <li>注意力集中，不易分心</li>
+                        </ul>
+                        ${luckyGuideHTML}
+                    `;
+                    break;
+                    
+                case 'diet':
+                    title.textContent = '🍎 饮食详情';
+                    content.innerHTML = `
+                        <h3>今日饮食分析</h3>
+                        <p>${fortuneData.detailedInfo.diet}</p>
+                        <h4>早餐建议：</h4>
+                        <p>${document.getElementById('breakfast').textContent}</p>
+                        <h4>午餐建议：</h4>
+                        <p>${document.getElementById('lunch').textContent}</p>
+                        <h4>晚餐建议：</h4>
+                        <p>${document.getElementById('dinner').textContent}</p>
+                        ${luckyGuideHTML}
+                    `;
+                    break;
+                    
+                case 'spirit':
+                    title.textContent = '🧘 精神详情';
+                    content.innerHTML = `
+                        <h3>今日精神状态分析</h3>
+                        <p>${fortuneData.detailedInfo.spirit}</p>
+                        ${luckyGuideHTML}
+                    `;
+                    break;
+            }
+            
+            modal.style.display = 'block';
+        }
+        
+        // 关闭详细说明模态框
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+        
+        // 今日运势评分 + 评语生成函数
+        function generateTodayFortune(userInfo) {
+            // 验证用户信息
+            if (!userInfo || !userInfo.birthYear || !userInfo.birthMonth || !userInfo.birthDay) {
+                return { error: '请提供完整的用户信息' };
+            }
+            
+            // 基础参数提取
+            const { birthYear, birthMonth, birthDay, birthHour, mbti, location } = userInfo;
+            const today = new Date();
+            const todayYear = today.getFullYear();
+            const todayMonth = today.getMonth() + 1;
+            const todayDay = today.getDate();
+            
+            // 生成随机种子（基于用户信息和日期，保证同一天同一用户结果一致）
+            const seed = birthYear * 10000 + birthMonth * 100 + birthDay + todayYear * 10000 + todayMonth * 100 + todayDay;
+            
+            // 生成随机数（基于种子，确保结果可复现）
+            function getRandom(min, max) {
+                const x = Math.sin(seed) * 10000;
+                const random = x - Math.floor(x);
+                return Math.floor(random * (max - min + 1) + min);
+            }
+            
+            // 生成六大维度运势（0-10分）
+            const careerLuck = getRandom(7, 10);
+            const relationshipLuck = getRandom(6, 9);
+            const financeLuck = getRandom(6, 8);
+            const emotionalValue = getRandom(7, 9);
+            const efficiencyValue = getRandom(8, 10);
+            const nobleLuck = getRandom(6, 8);
+            
+            // 计算综合运势评分（六大维度的平均值，0-10分）
+            const totalScore = Math.round((careerLuck + relationshipLuck + financeLuck + emotionalValue + efficiencyValue + nobleLuck) / 6);
+            
+            // 生成今日运势简短评语
+            const comments = [
+                '今日职场状态在线，效率与人际双丰收的一天！',
+                '工作节奏舒适，适合推进重要项目，会有不错的收获。',
+                '精神饱满，思维敏捷，是解决复杂问题的好时机。',
+                '团队合作顺畅，容易得到他人支持，工作进展顺利。',
+                '今日运势不错，保持专注，可能会有意外的小惊喜。',
+                '情绪稳定，工作效率高，适合规划未来的工作安排。'
+            ];
+            const comment = comments[getRandom(0, comments.length - 1)];
+            
+            // 生成详细运势信息
+            const detailedInfo = {
+                finance: '今日正财运平稳，有小额奖金入账机会，偏财运一般；宜稳健理财，避免冲动消费。',
+                relationship: '今日沟通顺畅，同事关系融洽，社交氛围和谐；易得到他人支持与帮助。',
+                spirit: '专注力强，灵感涌现，抗压能力良好；工作节奏舒适，不易感到疲惫。',
+                diet: '今日食欲适中，肠胃状态良好；建议多吃绿色蔬菜，保持饮食均衡。'
+            };
+            
+            // 生成开运指南
+            const luckyGuide = {
+                crystals: ['绿幽灵（提升事业运）', '粉晶（增进人际关系）'],
+                luckyColors: '主色（浅蓝）+ 点缀色（淡绿）',
+                deskItems: ['小型绿植（绿萝）', '水晶球'],
+                screenDirection: '东南方'
+            };
+            
+            // 生成配图关键词
+            const imageKeywords = '极简商务矢量插画，柔和低饱和配色，透明背景，无文字，包含水晶、桌面摆件、幸运色元素，高级干净，适合小程序卡片';
+            
+            // 输出结果
+            return {
+                // 综合评分（10分制）
+                totalScore: totalScore,
+                // 简短评语
+                comment: comment,
+                // 六大维度运势（10分制）
+                dimensions: {
+                    '事业运': careerLuck,
+                    '人际运': relationshipLuck,
+                    '财运': financeLuck,
+                    '情绪值': emotionalValue,
+                    '效率值': efficiencyValue,
+                    '贵人运': nobleLuck
+                },
+                // 详细运势信息
+                detailedInfo: detailedInfo,
+                // 开运指南
+                luckyGuide: luckyGuide,
+                // 配图关键词
+                imageKeywords: imageKeywords
+            };
+        }
+        
+        // 重置应用函数
+        function resetApp() {
+            // 确认重置操作
+            if (confirm('确定要重置应用吗？这将清除所有用户信息和设置。')) {
+                // 清除本地存储
+                localStorage.removeItem('lastUsedUser');
+                if (currentUser) {
+                    localStorage.removeItem('userInfo_' + currentUser);
+                }
+                
+                // 重置全局变量
+                userInfo = null;
+                currentUser = '';
+                
+                // 恢复默认显示
+                document.getElementById('userNickname').textContent = '福宝';
+                document.getElementById('fortuneSummary').textContent = '快告诉我你是谁，我来帮你算算吧！';
+                
+                // 隐藏运势列表和可视化区域
+                document.getElementById('visualizationSection').style.display = 'none';
+                document.getElementById('fortuneList').style.display = 'none';
+                
+                // 显示个人信息输入模块
+                document.getElementById('infoInputModule').style.display = 'block';
+                
+                // 重置表单字段
+                document.getElementById('nickname').value = '';
+                document.getElementById('birthDate').value = '';
+                document.getElementById('birthHour').value = '';
+                document.getElementById('mbti').value = '';
+                document.getElementById('location').value = '';
+                
+                // 重置评分和评语显示
+                document.getElementById('totalScore').textContent = '0';
+                document.getElementById('fortuneComment').textContent = '';
+                
+                // 重置评分条
+                const scoreIds = ['financeScore', 'relationshipScore', 'efficiencyScore', 'dietScore', 'spiritScore', 'luckScore'];
+                scoreIds.forEach(id => {
+                    const bar = document.getElementById(id + 'Bar');
+                    const value = document.getElementById(id);
+                    if (bar) bar.style.width = '0%';
+                    if (value) value.textContent = '0';
+                });
+                
+                alert('应用已重置！');
+            }
+        }
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const userInfoModal = document.getElementById('userInfoModal');
+            const detailsModal = document.getElementById('detailsModal');
+            
+            if (event.target == userInfoModal) {
+                closeUserInfoModal();
+            }
+            if (event.target == detailsModal) {
+                closeDetailsModal();
+            }
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = init;
+    </script>
+</body>
+</html>
