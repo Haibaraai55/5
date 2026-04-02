@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "fortune-guide",
+  "builds": [
+    {
+      "src": "bazi_recommender.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/bazi_recommender.html"
+    }
+  ]
+}
